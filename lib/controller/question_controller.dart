@@ -3,10 +3,14 @@ import '../model/question.dart';
 
 class QuestionController extends HTTPController {
   @httpGet
-  Future<Response> getAllQuestions() async {
+  Future<Response> getAllQuestions(
+      {@HTTPQuery("contains") String containsSubstring}) async {
     var questionQuery = new Query<Question>();
-    var databaseQuestions = await questionQuery.fetch();
 
+    if (containsSubstring != null) {
+      questionQuery.where.description = whereContainsString(containsSubstring);
+    }
+    var databaseQuestions = await questionQuery.fetch();
     return new Response.ok(databaseQuestions);
   }
 

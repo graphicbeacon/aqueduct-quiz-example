@@ -39,4 +39,14 @@ Future main() async {
   test("/questions/index out of range returns 404", () async {
     expectResponse(await app.client.request("/questions/100").get(), 404);
   });
+
+  test("/questions returns list of questions filtered by contains", () async {
+    var request = app.client.request("/questions?contains=mountain");
+    expectResponse(await request.get(), 200, body: [
+      {
+        "index": greaterThanOrEqualTo(0),
+        "description": "What's the tallest mountain in the world?"
+      }
+    ]);
+  });
 }
