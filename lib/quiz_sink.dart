@@ -1,5 +1,7 @@
 import 'quiz.dart';
 import 'controller/question_controller.dart';
+import 'model/question.dart';
+import 'model/answer.dart';
 
 /// This class handles setting up this application.
 ///
@@ -56,5 +58,48 @@ class QuizSink extends RequestSink {
   /// initialization process. This method is invoked after [setupRouter] and prior to this
   /// instance receiving any requests.
   @override
-  Future willOpen() async {}
+  Future willOpen() async {
+    // await createDatabaseSchema(context);
+    // await populateTables();
+  }
+
+  static Future createDatabaseSchema(ManagedContext context) async {
+    var builder = new SchemaBuilder.toSchema(
+      context.persistentStore,
+      new Schema.fromDataModel(context.dataModel),
+      isTemporary: true,
+    );
+
+    for (var cmd in builder.commands) {
+      await context.persistentStore.execute(cmd);
+    }
+  }
+
+  static Future populateTables() async {
+    var questions = [
+      new Question()
+        ..description = "How much wood can a woodchuck chuck?"
+        ..answers = (new ManagedSet()
+          ..add(new Answer()..description = "Depends")
+          ..add(new Answer()..description = "At least one perhaps")),
+      new Question()
+        ..description = "What's the tallest mountain in the world?"
+        ..answers = (new ManagedSet()
+          ..add(new Answer()..description = "Mount Everest")),
+    ];
+
+    await Future.forEach(questions, (Question q) async {
+      var query = new Query<Question>()..values = q;
+      var insertedQuestion = await query.insert();
+
+      var answers = q.answers;
+      await Future.forEach(answers, (Answer a) async {
+        var answer = new Query<Answer>()
+          ..values = a
+          ..values.question = insertedQuestion;
+        return (await answer.insert());
+      });
+      return insertedQuestion;
+    });
+  }
 }
