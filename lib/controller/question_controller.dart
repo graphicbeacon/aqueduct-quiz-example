@@ -6,7 +6,7 @@ class QuestionController extends HTTPController {
   Future<Response> getAllQuestions(
       {@HTTPQuery("contains") String containsSubstring}) async {
     var questionQuery = new Query<Question>()
-      ..join(object: (question) => question.answer);
+      ..join(set: (question) => question.answers);
 
     if (containsSubstring != null) {
       questionQuery.where.description = whereContainsString(containsSubstring);
@@ -18,8 +18,8 @@ class QuestionController extends HTTPController {
   @httpGet
   Future<Response> getQuestionAtIndex(@HTTPPath("index") int index) async {
     var questionQuery = new Query<Question>()
-      ..join(object: (question) => question.answer)
-      ..where.index = whereEqualTo(index); // `whereEqualTo()` query matchers
+      ..where.index = whereEqualTo(index) // `whereEqualTo()` query matchers
+      ..join(set: (question) => question.answers);
 
     var question = await questionQuery.fetchOne();
 

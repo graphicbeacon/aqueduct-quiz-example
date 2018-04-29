@@ -8,5 +8,5 @@ class _Question {
   int index;
 
   String description;
-  Answer answer;
+  ManagedSet<Answer> answers;
 }

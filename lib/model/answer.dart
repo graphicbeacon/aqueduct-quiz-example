@@ -13,7 +13,7 @@ class _Answer {
   // Question and Answer classes, in particular the
   // `answer` prop on the Question class. Only one of
   // the linked classes can have this meta data
-  @ManagedRelationship(#answer,
+  @ManagedRelationship(#answers,
       onDelete: ManagedRelationshipDeleteRule.cascade, isRequired: true)
   Question question;
 }

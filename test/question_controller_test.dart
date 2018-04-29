@@ -11,20 +11,26 @@ Future main() async {
     var questions = [
       new Question()
         ..description = "How much wood can a woodchuck chuck?"
-        ..answer = (new Answer()..description = "Depends"),
+        ..answers = (new ManagedSet()
+          ..add(new Answer()..description = "Depends")
+          ..add(new Answer()..description = "At least one perhaps")),
       new Question()
         ..description = "What's the tallest mountain in the world?"
-        ..answer = (new Answer()..description = "Mount Everest"),
+        ..answers = (new ManagedSet()
+          ..add(new Answer()..description = "Mount Everest")),
     ];
 
     await Future.forEach(questions, (Question q) async {
       var query = new Query<Question>()..values = q;
       var insertedQuestion = await query.insert();
 
-      var answerQuery = new Query<Answer>()
-        ..values.description = q.answer.description
-        ..values.question = insertedQuestion;
-      await answerQuery.insert();
+      var answers = q.answers;
+      await Future.forEach(answers, (Answer a) async {
+        var answer = new Query<Answer>()
+          ..values = a
+          ..values.question = insertedQuestion;
+        return (await answer.insert());
+      });
       return insertedQuestion;
     });
   });
@@ -40,7 +46,9 @@ Future main() async {
           hasLength(greaterThan(0)),
           everyElement(partial({
             "description": endsWith("?"),
-            "answer": partial({"description": isString})
+            "answers": allOf([
+              everyElement(partial({"description": isString}))
+            ])
           }))
         ]));
   });
@@ -49,7 +57,9 @@ Future main() async {
     expectResponse(await app.client.request("/questions/1").get(), 200,
         body: partial({
           "description": endsWith("?"),
-          "answer": partial({"description": isString})
+          "answers": allOf([
+            everyElement(partial({"description": isString}))
+          ])
         }));
   });
 
@@ -63,7 +73,9 @@ Future main() async {
       {
         "index": greaterThanOrEqualTo(0),
         "description": "What's the tallest mountain in the world?",
-        "answer": partial({"description": "Mount Everest"})
+        "answers": allOf([
+          everyElement(partial({"description": "Mount Everest"}))
+        ])
       }
     ]);
   });
