@@ -1,4 +1,5 @@
 import '../quiz.dart';
+import 'answer.dart';
 
 class Question extends ManagedObject<_Question> implements _Question {}
 
@@ -7,4 +8,5 @@ class _Question {
   int index;
 
   String description;
+  Answer answer;
 }
