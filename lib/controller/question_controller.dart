@@ -1,21 +1,25 @@
 import '../quiz.dart';
+import '../model/question.dart';
 
 class QuestionController extends HTTPController {
-  List<String> questions = [
-    'How much wood can a woodchuck chuck?',
-    'Whats the tallest mountain in the world',
-  ];
-
   @httpGet
   Future<Response> getAllQuestions() async {
-    return new Response.ok(questions);
+    var questionQuery = new Query<Question>();
+    var databaseQuestions = await questionQuery.fetch();
+
+    return new Response.ok(databaseQuestions);
   }
 
   @httpGet
   Future<Response> getQuestionAtIndex(@HTTPPath("index") int index) async {
-    if (index < 0 || index > questions.length) {
+    var questionQuery = new Query<Question>()
+      ..where.index = whereEqualTo(index); // `whereEqualTo()` query matchers
+
+    var question = await questionQuery.fetchOne();
+
+    if (question == null) {
       return new Response.notFound();
     }
-    return new Response.ok(questions[index]);
+    return new Response.ok(question);
   }
 }
