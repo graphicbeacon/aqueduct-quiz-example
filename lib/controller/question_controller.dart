@@ -24,7 +24,8 @@ class QuestionController extends HTTPController {
     var question = await questionQuery.fetchOne();
 
     if (question == null) {
-      return new Response.notFound();
+      return new Response.notFound(body: '<h1>404 Not Found</h1>')
+        ..contentType = ContentType.HTML;
     }
     return new Response.ok(question);
   }

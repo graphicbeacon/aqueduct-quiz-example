@@ -59,8 +59,8 @@ class QuizSink extends RequestSink {
   /// instance receiving any requests.
   @override
   Future willOpen() async {
-    // await createDatabaseSchema(context);
-    // await populateTables();
+    await createDatabaseSchema(context);
+    await populateTables();
   }
 
   static Future createDatabaseSchema(ManagedContext context) async {
