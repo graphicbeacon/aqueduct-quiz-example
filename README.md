@@ -1,5 +1,4 @@
-
-# quiz
+# quiz rest api
 
 An application built with [aqueduct](https://github.com/stablekernel/aqueduct).
 
@@ -13,13 +12,13 @@ If you wish to use the debugger in your IDE, run the `bin/main.dart` script from
 
 To run all tests for this application, run the following in this directory:
 
-```
+```bash
 pub run test
 ```
 
 You may also run tests from an IntelliJ IDE by right-clicking on a test file or test case and selected 'Run tests'.
 
-Tests will be run using the configuration file `config.src.yaml`. This file should contain  test configuration values and remain in source control. This file is the template for `config.yaml` files, which live on deployed server instances.
+Tests will be run using the configuration file `config.src.yaml`. This file should contain test configuration values and remain in source control. This file is the template for `config.yaml` files, which live on deployed server instances.
 
 See the application test harness, `test/app/harness.dart`, for more details. This file contains a `TestApplication` class that can be set up and torn down for tests.
 
